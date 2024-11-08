@@ -1,0 +1,22 @@
+<!-- store/templates/store/laptop_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ laptop.manufacturer }} - Details</title>
+</head>
+<body>
+    <h1>{{ laptop.manufacturer }} - Details</h1>
+    <img src="{{ laptop.photo.url }}" alt="Photo of {{ laptop.manufacturer }}" width="300">
+    <p><strong>Processor:</strong> {{ laptop.processor_type }}</p>
+    <p><strong>RAM:</strong> {{ laptop.ram_size }} GB</p>
+    <p><strong>Storage:</strong> {{ laptop.storage_type }} - {{ laptop.storage_size }} GB</p>
+    <p><strong>USB Ports:</strong> {{ laptop.usb_ports }}</p>
+    <p><strong>Sale Price:</strong> ${{ laptop.sale_price }}</p>
+    <form action="{% url 'purchase_laptop' laptop.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Purchase</button>
+    </form>
+    <p><a href="{% url 'gallery' %}">Back to Gallery</a></p>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!-- store/templates/store/gallery.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Laptop Gallery</title>
+</head>
+<body>
+    <h1>Laptop Gallery</h1>
+    <div>
+        {% for laptop in laptops %}
+            <div>
+                <a href="{% url 'laptop_detail' laptop.id %}">
+                    <img src="{{ laptop.photo.url }}" alt="Photo of {{ laptop.manufacturer }}" width="200">
+                    <p>{{ laptop.manufacturer }}</p>
+                </a>
+            </div>
+        {% empty %}
+            <p>No laptops available at the moment.</p>
+        {% endfor %}
+    </div>
+    <p><a href="{% url 'register' %}">Register</a> | <a href="{% url 'login' %}">Login</a></p>
+</body>
+</html>
