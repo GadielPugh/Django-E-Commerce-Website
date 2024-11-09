@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Laptop(models.Model):
     manufacturer = models.CharField(max_length=50)
@@ -26,5 +27,9 @@ class UserProfile(models.Model):
 class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     laptop = models.ForeignKey(Laptop, on_delete=models.CASCADE)
-    transaction_date = models.DateTimeField(auto_now_add=True)
-    is_complete = models.BooleanField(default=False)
+    buyer_name = models.CharField(max_length=100, default="Anonymous Buyer")
+    address = models.TextField(default="No address provided")
+    bank_account_name = models.CharField(max_length=100, default="No Account Name Provided")  # New field
+    bank_account_number = models.CharField(max_length=20, default="000000000")
+    date_of_purchase = models.DateTimeField(default=timezone.now)
+    is_paid = models.BooleanField(default=False)

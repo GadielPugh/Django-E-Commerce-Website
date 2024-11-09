@@ -22,6 +22,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from store import views  # Ensure your views are imported
 from django.shortcuts import redirect
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('', lambda request: redirect('gallery'), name='home'),  # Redirect root URL to gallery
@@ -29,8 +30,10 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
     path('gallery/', views.laptop_gallery, name='gallery'),
-    path('laptop/<int:id>/', views.laptop_detail, name='laptop_detail'),
-    path('purchase/<int:id>/', views.purchase_laptop, name='purchase_laptop'),
+    path('purchase/<int:laptop_id>/', views.purchase_laptop, name='purchase'),
+    path('logout/', LogoutView.as_view(next_page='/gallery/'), name='logout'),
+    path('laptops/<int:laptop_id>/', views.laptop_detail, name='laptop_detail'),
+    path('purchase/success/', views.purchase_success, name='purchase_success'),
 ]
 
 if settings.DEBUG:
