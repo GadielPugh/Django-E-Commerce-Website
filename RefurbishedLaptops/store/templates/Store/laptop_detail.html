@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +8,22 @@
 <body>
     <h1>{{ laptop.name }}</h1>
     <p>{{ laptop.description }}</p>
-    <p>Price: {% if can_purchase %}{{ laptop.price }}{% else %}Please log in to view the price{% endif %}</p>
+     <!-- Display the laptop photo if available, else a placeholder -->
+    {% if laptop.photo %}
+        <img src="{{ laptop.photo.url }}" alt="Photo of {{ laptop.name }}">
+    {% else %}
+        <img src="{% static 'images/placeholder.png' %}" alt="No image available">
+    {% endif %}
+    
+    <p>Manufacturer: {{ laptop.manufacturer }}</p>
+    <p>Processor Type: {{ laptop.processor_type }}</p>
+    <p>RAM Size: {{ laptop.ram_size }} GB</p>
+    <p>Storage Type: {{ laptop.storage_type }}</p>
+    <p>Storage Size: {{ laptop.storage_size }} GB</p>
+    <p>USB Ports: {{ laptop.usb_ports }}</p>
+    <p>Price: {% if can_purchase %}{{ laptop.sale_price }}{% else %}Please log in to view the price{% endif %}</p>
+
+   
 
     {% if can_purchase %}
         <form action="{% url 'purchase' laptop.id %}" method="post">

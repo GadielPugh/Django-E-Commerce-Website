@@ -31,10 +31,12 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('gallery/', views.laptop_gallery, name='gallery'),
     path('purchase/<int:laptop_id>/', views.purchase_laptop, name='purchase'),
-    path('logout/', LogoutView.as_view(next_page='/gallery/'), name='logout'),
     path('laptops/<int:laptop_id>/', views.laptop_detail, name='laptop_detail'),
     path('purchase/success/', views.purchase_success, name='purchase_success'),
+    path('logout/', views.custom_logout, name='logout'),
+    path('purchase_confirmation/<int:transaction_id>/', views.purchase_confirmation, name='purchase_confirmation'),
 ]
 
+# Serve media files during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

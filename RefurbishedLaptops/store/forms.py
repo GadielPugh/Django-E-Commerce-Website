@@ -14,4 +14,9 @@ class CustomUserCreationForm(UserCreationForm):
 class PurchaseForm(forms.ModelForm):
     class Meta:
         model = Transaction
-        fields = ['buyer_name', 'address', 'bank_account_number'] 
+        fields = ['address', 'bank_account_name', 'bank_account_number']
+        labels = {
+            'address': 'Physical Address',
+            'bank_account_name': 'Bank Account Name',
+            'bank_account_number': 'Bank Account Number'
+        }

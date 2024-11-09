@@ -1,0 +1,5 @@
+<h2>Purchase Confirmed!</h2>
+<p>Your purchase of {{ transaction.laptop.name }} has been successfully completed.</p>
+<p>Payment Method: {{ transaction.payment_type }}</p>
+<p>Transaction ID: {{ transaction.id }}</p>
+<a href="{% url 'gallery' %}">Back to Gallery</a>

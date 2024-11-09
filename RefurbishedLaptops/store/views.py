@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import CustomUserCreationForm
-from .models import UserProfile, Laptop
+from .forms import CustomUserCreationForm, PurchaseForm
+from .models import Laptop, Transaction
 
 # Views fpr remder 
 from .models import Laptop
@@ -43,46 +43,59 @@ def login_view(request):
 
 # View for the laptop gallery (accessible to everyone)
 def laptop_gallery(request):
-    laptops = Laptop.objects.all()
+    laptops = Laptop.objects.filter(sold=False)  # Exclude sold laptops
     return render(request, 'store/gallery.html', {'laptops': laptops, 'user': request.user})
 
 # View for laptop details (only for logged-in users)
 @login_required
 def laptop_detail(request, laptop_id):
     laptop = get_object_or_404(Laptop, id=laptop_id)
-    context = {
-        'laptop': laptop,
-        'can_purchase': request.user.is_authenticated
-    }
-    return render(request, 'store/laptop_detail.html', context)
+    can_purchase = request.user.is_authenticated  # Check if the user is logged in
+    return render(request, 'store/laptop_detail.html', {'laptop': laptop, 'can_purchase': can_purchase})
 
 # Purchase view (only for logged-in users)
 @login_required
 def purchase_laptop(request, laptop_id):
-    laptop = get_object_or_404(Laptop, id=laptop_id)
-
-    # Check if the user is authenticated before proceeding with the purchase
-    if not request.user.is_authenticated:
-        return redirect('login')  # Redirect to login page if not logged in
-
+    laptop = get_object_or_404(Laptop, id=laptop_id, sold=False)
     if request.method == 'POST':
         form = PurchaseForm(request.POST)
         if form.is_valid():
-            # Save the transaction but do not commit to the database yet
-            transaction = form.save(commit=False)
-            transaction.user = request.user
-            transaction.laptop = laptop
-            transaction.is_paid = False  # Payment will be held until pickup
-            transaction.save()
+            # Process the purchase form data (simulating payment here)
+            transaction = Transaction.objects.create(
+                laptop=laptop,
+                user=request.user,
+                payment_status='completed',  # Marking the payment as complete
+                payment_type='debit card'
+            )
+            # Mark the laptop as sold
+            laptop.sold = True
+            laptop.save()
 
-            # Redirect to a success page after the purchase
-            return redirect('purchase_success')
-
+            # Redirect to the purchase confirmation page with the transaction id
+            return redirect('purchase_confirmation', transaction_id=transaction.id)
     else:
         form = PurchaseForm()
 
     return render(request, 'store/purchase.html', {'form': form, 'laptop': laptop})
 
+@login_required
+def confirm_pickup(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+    transaction.confirm_pickup()  # Update the transaction to completed
+    return redirect('gallery')  # Redirect to the gallery
 
 def purchase_success(request):
     return render(request, 'store/purchase_success.html')
+
+def custom_logout(request):
+    logout(request)
+    return redirect('gallery')  # Redirect to the gallery page
+
+def gallery(request):
+    laptops = Laptop.objects.all()
+    return render(request, 'store/gallery.html', {'laptops': laptops})
+
+def purchase_confirmation(request, transaction_id):
+    transaction = get_object_or_404(Transaction, id=transaction_id)
+    return render(request, 'store/purchase_confirmation.html', {'transaction': transaction})
+

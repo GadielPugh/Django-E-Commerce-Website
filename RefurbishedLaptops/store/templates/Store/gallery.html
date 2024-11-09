@@ -1,28 +1,29 @@
 <!-- store/templates/store/gallery.html -->
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Refurbished Laptops{% endblock %}</title>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Refurbished Laptops{% endblock %}</title>
+</head>
 <body>
 
-    <header>
-        <nav>
-            <a href="{% url 'gallery' %}">Gallery</a>
-            {% if user.is_authenticated %}
-                <span>Welcome, {{ user.username }}</span> |
-                <a href="{% url 'logout' %}">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}">Login</a> |
-                <a href="{% url 'register' %}">Register</a>
-            {% endif %}
-        </nav>
-    </header>
+<header>
+    <nav>
+        <a href="{% url 'gallery' %}">Gallery</a>
+        {% if user.is_authenticated %}
+            <span>Welcome, {{ user.username }}</span> |
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a> |
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </nav>
+</header>
 
-    
-    <h1>Laptop Gallery</h1>
-    <div>
+<h1>Laptop Gallery</h1>
+
+<div>
+    {% if laptops %}
         {% for laptop in laptops %}
             <div>
                 <a href="{% if user.is_authenticated %}{% url 'laptop_detail' laptop.id %}{% else %}#{% endif %}">
@@ -30,6 +31,7 @@
                         <img src="{{ laptop.photo.url }}" alt="Photo of {{ laptop.manufacturer }}" width="200">
                     {% endif %}
                     <p><strong>{{ laptop.name }}</strong></p>
+                    <p>{{ laptop.description }}</p>
                     {% if user.is_authenticated %}
                         <p>Price: ${{ laptop.sale_price }}</p>
                     {% else %}
@@ -38,7 +40,10 @@
                 </a>
             </div>
         {% endfor %}
-    </div>
-    <p><a href="{% url 'register' %}">Register</a> | <a href="{% url 'login' %}">Login</a></p>
+    {% else %}
+        <p>No laptops available at this time.</p>
+    {% endif %}
+</div>
+
 </body>
 </html>
